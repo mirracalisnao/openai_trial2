@@ -2,12 +2,12 @@ import streamlit as st
 import openai
 import os
 import time
+import asyncio
 
 from openai import AsyncOpenAI
 
-client = AsyncOpenAI(
-    api_key=os.getenv("API_key")
-)
+# Create AsyncOpenAI instance
+client = AsyncOpenAI(api_key=os.getenv("API_key"))
 
 context = """This app assists users in finding information about specific medications 
 based on their symptoms. Please follow the prompts to proceed."""
@@ -114,5 +114,4 @@ async def display_information3():
 
 # Run the app
 if __name__ == "__main__":
-    import asyncio
     asyncio.run(app())
