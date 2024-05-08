@@ -50,7 +50,7 @@ async def display_symptoms_form1():
     form1.text(text)
 
     form1.image("med_ai.png", caption="Medication Information App", use_column_width=True)
-    text = """An AI powered research co-pilot designed to assist students in finding research problems for their undergraduate thesis."""
+    text = """An An AI-powered research co-pilot designed to assist users in finding information about specific medications based on their symptoms."""
     form1.write(text)
     
     # Prompt user for symptoms
@@ -93,11 +93,6 @@ async def display_symptoms_form1():
 
 async def display_information3(possible_medications, symptoms, age):
     form3 = st.form("Medication Information")
-    
-    selected_medication = st.selectbox("Select a medication", possible_medications, key="selected_medication")
-    
-    if selected_medication:
-        st.session_state["selected_medication"] = selected_medication
     
     symptoms = st.session_state["symptoms"]
     age = st.session_state["age"]
