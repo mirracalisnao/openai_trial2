@@ -78,12 +78,6 @@ async def display_symptoms_form1():
         else:
             form1.warning("Please enter your symptoms.")
 
-    if st.session_state["current_form"] == 2:
-    selected_medication = st.selectbox("Select a medication", st.session_state["possible_medications"])
-    if selected_medication:
-        # Do something with the selected medication
-        pass
-
 async def display_information3(possible_medications, symptoms, age):
     form3 = st.form("Medication Information")
     
@@ -116,7 +110,7 @@ async def display_information3(possible_medications, symptoms, age):
             form3.write(response_med_info)
             form3.write("Would you like to ask another question?")  
             form3.write("If yes, please refresh the browser.") 
-            
+
 # Run the app
 if __name__ == "__main__":
     asyncio.run(app())
