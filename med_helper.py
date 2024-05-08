@@ -76,7 +76,13 @@ async def display_symptoms_form1():
             else:
                 form1.warning("No medications found for the entered symptoms.")       
         else:
-            form1.warning("Please enter your symptoms.")       
+            form1.warning("Please enter your symptoms.")
+
+    if st.session_state["current_form"] == 2:
+    selected_medication = st.selectbox("Select a medication", st.session_state["possible_medications"])
+    if selected_medication:
+        # Do something with the selected medication
+        pass
 
 async def display_information3(possible_medications, symptoms, age):
     form3 = st.form("Medication Information")
