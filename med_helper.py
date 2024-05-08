@@ -1,7 +1,8 @@
 import streamlit as st
+import openai
 import os
 import time
-from openai import AsyncOpenAI
+import asyncio
 
 # Create AsyncOpenAI instance
 client = AsyncOpenAI(api_key=os.getenv("API_key"))
