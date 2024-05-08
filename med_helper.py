@@ -85,13 +85,15 @@ async def display_information3():
     form3 = st.form("Medication Information")
     symptoms = st.session_state["symptoms"]
     possible_medications = st.session_state["possible_medications"]
+    age = st.session_state["age"]
     
     form3.write(f"Symptoms: {symptoms}")
+    form3.write(f"Age: {age}")
     form3.write("Possible Medications:")
     for medication in possible_medications:
         form3.write(f"- {medication}")
     
-    question = f"Provide information about the medication {possible_medications[0]}, including indications, contraindications, side effects, and nursing considerations."
+    question = f"Provide information about the medication {possible_medications[0]} for a {age}-year-old, including indications, contraindications, common and potential side effects, usage instructions (e.g., dosage and frequency of administration), and any other important considerations."
     progress_bar = form3.progress(0, text="The AI co-pilot is processing the request, please wait...")
     response = await generate_response(question, context)
     form3.write("Medication Information:")
