@@ -87,7 +87,7 @@ async def display_symptoms_form1():
             else:
                 st.session_state["selected_medication"] = selected_medication  # Save selected medication
                 st.session_state["current_form"] = 2  # Move to the next form
-            await display_information3()  # Call the display_information3 function directly
+            await display_information3(possible_medications, symptoms, age)  # Call the display_information3 function directly
         else:
             form1.warning("Please enter your symptoms.")       
 
