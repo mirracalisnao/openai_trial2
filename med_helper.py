@@ -110,7 +110,7 @@ async def display_information3(possible_medications, symptoms, age):
             form3.write(response_med_info)
             form3.write("Would you like to ask another question?")  
             form3.write("If yes, please refresh the browser.") 
-
+            
 # Run the app
 if __name__ == "__main__":
     asyncio.run(app())
