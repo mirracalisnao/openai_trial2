@@ -92,7 +92,6 @@ async def display_symptoms_form1():
             form1.warning("Please enter your symptoms.")       
 
 async def display_information3(possible_medications, symptoms, age):
-    async def display_information3(possible_medications, symptoms, age):
     form3 = st.form("Medication Information")
     
     selected_medication = st.selectbox("Select a medication", possible_medications, key="selected_medication")
