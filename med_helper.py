@@ -47,44 +47,35 @@ async def display_symptoms_form1():
     form1 = st.form("Introduction")
     form1.subheader("Medication Information Lookup")
     
-    text = """Cherry Mirra Calisnao     BSCS 3A \n
-    CCS 229 - Intelligent Systems \n
-    Final Project in Intelligent Systems \n
-    College of Information and Communications Technology
-    West Visayas State University"""
-    form1.text(text)
-
-    form1.image("med_ai.png", caption="Medication Information App", use_column_width=True)
-    text = """An AI powered research co-pilot designed to assist students in finding research problems for their undergraduate thesis."""
-    form1.write(text)
-    
-    # Prompt user for symptoms
-    symptoms = form1.text_input("Enter your symptoms (comma-separated):", key="symptoms")
-
-    # Prompt user for age
-    age = form1.number_input("Enter your age:", min_value=0, max_value=150, key="age")
+    # your existing code
     
     submit1 = form1.form_submit_button("Submit")
 
     if submit1:
+        symptoms = form1["symptoms"].value
+        age = form1["age"].value
+        
         if symptoms:
-            st.session_state["symptoms"] = symptoms  # Set the session state here
+            # Set the session state here
+            st.session_state["symptoms"] = symptoms
             st.session_state["age"] = age
+            
             # Generate a question based on symptoms and age
             question = f"What medication would you recommend for a {age}-year-old with {symptoms.strip()}?"
             # Generate possible medications based on the question
             response = await generate_response(question, context)
             possible_medications = response.splitlines()
-        if possible_medications:
-            st.session_state["possible_medications"] = possible_medications
-            st.session_state["current_form"] = 2  # Move to the next form
-            await generate_possible_medication2()
+            
+            if possible_medications:
+                st.session_state["possible_medications"] = possible_medications
+                st.session_state["current_form"] = 2  # Move to the next form
+                await generate_possible_medication2()
+            else:
+                form1.warning("No medications found for the entered symptoms.")       
         else:
-            form1.warning("No medications found for the entered symptoms.")       
-    else:
-        form1.warning("Please enter your symptoms.")   
-         
+            form1.warning("Please enter your symptoms.")   
 
+         
 async def generate_possible_medication2():
     possible_medications = st.session_state["possible_medications"]
     selected_medication = st.selectbox("Select a medication:", possible_medications)
