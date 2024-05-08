@@ -125,3 +125,4 @@ async def display_information3(possible_medications, symptoms, age):
 if __name__ == "__main__":
     import asyncio
     asyncio.run(app())
+
