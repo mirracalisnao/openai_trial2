@@ -53,46 +53,37 @@ async def display_symptoms_form1():
     # Prompt user for symptoms
     symptoms = form1.text_input("Enter your symptoms (comma-separated):", key="symptoms")
     
-    # Display possible medications
-    possible_medications = [
-        "Paracetamol",
-        "Ibuprofen",
-        "Aspirin",
-        "Cetirizine",
-        "Loratadine",
-        "Diphenhydramine",
-        "Ranitidine",
-        "Omeprazole",
-        "Loperamide",
-        "Simethicone",
-        "Other (Specify)"
-    ]
-    selected_medication = form1.selectbox("Select a possible medication:", options=possible_medications)
-
     submit1 = form1.form_submit_button("Submit")
 
     if submit1:
         if symptoms:
             if "symptoms" not in st.session_state:
                 st.session_state["symptoms"] = symptoms
-            if selected_medication == "Other (Specify)":
-                st.session_state["current_form"] = 2  # Skip to medication information form directly
-            else:
-                st.session_state["selected_medication"] = selected_medication  # Save selected medication
+            # Generate a question based on symptoms
+            question = f"What medication would you recommend for {symptoms.strip()}?"
+            # Generate possible medications based on the question
+            response = await generate_response(question, context)
+            possible_medications = response.splitlines()
+            if possible_medications:
+                st.session_state["possible_medications"] = possible_medications
                 st.session_state["current_form"] = 2  # Move to the next form
-            await display_information3()  # Call the display_information3 function directly
+                await display_information3()  # Call the display_information3 function directly
+            else:
+                form1.warning("No medications found for the entered symptoms.")       
         else:
             form1.warning("Please enter your symptoms.")       
 
 async def display_information3():
     form3 = st.form("Medication Information")
     symptoms = st.session_state["symptoms"]
-    selected_medication = st.session_state["selected_medication"]
+    possible_medications = st.session_state["possible_medications"]
     
     form3.write(f"Symptoms: {symptoms}")
-    form3.write(f"Selected Medication: {selected_medication}")
+    form3.write("Possible Medications:")
+    for medication in possible_medications:
+        form3.write(f"- {medication}")
     
-    question = f"Provide information about the medication {selected_medication}, including indications, contraindications, side effects, and nursing considerations."
+    question = f"Provide information about the medication {possible_medications[0]}, including indications, contraindications, side effects, and nursing considerations."
     progress_bar = form3.progress(0, text="The AI co-pilot is processing the request, please wait...")
     response = await generate_response(question, context)
     form3.write("Medication Information:")
