@@ -1,9 +1,6 @@
 import streamlit as st
-import openai
 import os
 import time
-import asyncio
-
 from openai import AsyncOpenAI
 
 # Create AsyncOpenAI instance
@@ -14,9 +11,13 @@ based on their symptoms. Please follow the prompts to proceed."""
 
 async def generate_response(question, context):
     model = "gpt-3.5-turbo-0613"
-    completion = await client.chat.completions.create(model=model, 
-        messages=[{"role": "user", "content": question}, 
-                {"role": "system", "content": context}])
+    completion = await client.chat.completions.create(
+        model=model, 
+        messages=[
+            {"role": "user", "content": question}, 
+            {"role": "system", "content": context}
+        ]
+    )
     return completion.choices[0].message.content
 
 async def app():
@@ -36,6 +37,8 @@ async def app():
     if st.session_state["current_form"] == 1:
         await display_symptoms_form1()
     elif st.session_state["current_form"] == 2:
+        await generate_possible_medication2()
+    elif st.session_state["current_form"] == 3:
         await display_information3()
 
 async def display_symptoms_form1():
@@ -63,10 +66,8 @@ async def display_symptoms_form1():
 
     if submit1:
         if symptoms:
-            if "symptoms" not in st.session_state:
-                st.session_state["symptoms"] = symptoms
-            if "age" not in st.session_state:
-                st.session_state["age"] = age
+            st.session_state["symptoms"] = symptoms
+            st.session_state["age"] = age
             # Generate a question based on symptoms and age
             question = f"What medication would you recommend for a {age}-year-old with {symptoms.strip()}?"
             # Generate possible medications based on the question
@@ -75,25 +76,34 @@ async def display_symptoms_form1():
             if possible_medications:
                 st.session_state["possible_medications"] = possible_medications
                 st.session_state["current_form"] = 2  # Move to the next form
-                await display_information3()  # Call the display_information3 function directly
+                await generate_possible_medication2()
             else:
                 form1.warning("No medications found for the entered symptoms.")       
         else:
             form1.warning("Please enter your symptoms.")       
 
+async def generate_possible_medication2():
+    possible_medications = st.session_state["possible_medications"]
+    selected_medication = st.selectbox("Select a medication:", possible_medications)
+    st.session_state["selected_medication"] = selected_medication
+
+    generate_button = st.form_submit_button("Generate Medicine Information")
+
+    if generate_button:
+        st.session_state["current_form"] = 3  # Move to the next form
+        await display_information3()
+
 async def display_information3():
     form3 = st.form("Medication Information")
     symptoms = st.session_state["symptoms"]
-    possible_medications = st.session_state["possible_medications"]
+    selected_medication = st.session_state["selected_medication"]
     age = st.session_state["age"]
     
     form3.write(f"Symptoms: {symptoms}")
     form3.write(f"Age: {age}")
-    form3.write("Possible Medications:")
-    for medication in possible_medications:
-        form3.write(f"- {medication}")
-    
-    question = f"Provide information about the medication {possible_medications[0]} for a {age}-year-old, including indications, contraindications, common and potential side effects, usage instructions (e.g., dosage and frequency of administration), and any other important considerations."
+    form3.write(f"Selected Medication: {selected_medication}")
+
+    question = f"Provide information about the medication {selected_medication} for a {age}-year-old experiencing {symptoms} symptoms, including indications, contraindications, common and potential side effects, usage instructions (e.g., dosage and frequency of administration), and any other important considerations."
     progress_bar = form3.progress(0, text="The AI co-pilot is processing the request, please wait...")
     response = await generate_response(question, context)
     form3.write("Medication Information:")
@@ -111,7 +121,8 @@ async def display_information3():
     submit3 = form3.form_submit_button("Submit")  # Add the submit button
     if submit3:
         form3.write("Would you like to ask another question?")  
-        form3.write("If yes, please refresh the browser.") 
+        form3.write("If yes, please refresh the browser.")
+
 
 # Run the app
 if __name__ == "__main__":
