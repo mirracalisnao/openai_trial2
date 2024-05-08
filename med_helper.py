@@ -68,21 +68,21 @@ async def display_symptoms_form1():
 
     if submit1:
         if symptoms:
-            st.session_state["symptoms"] = symptoms
-            st.session_state["age"] = age
-            # Generate a question based on symptoms and age
-            question = f"What medication would you recommend for a {age}-year-old with {symptoms.strip()}?"
-            # Generate possible medications based on the question
-            response = await generate_response(question, context)
-            possible_medications = response.splitlines()
-            if possible_medications:
-                st.session_state["possible_medications"] = possible_medications
-                st.session_state["current_form"] = 2  # Move to the next form
-                await generate_possible_medication2()
-            else:
-                form1.warning("No medications found for the entered symptoms.")       
+        st.session_state["symptoms"] = symptoms  # Set the session state here
+        st.session_state["age"] = age
+        # Generate a question based on symptoms and age
+        question = f"What medication would you recommend for a {age}-year-old with {symptoms.strip()}?"
+        # Generate possible medications based on the question
+        response = await generate_response(question, context)
+        possible_medications = response.splitlines()
+        if possible_medications:
+            st.session_state["possible_medications"] = possible_medications
+            st.session_state["current_form"] = 2  # Move to the next form
+            await generate_possible_medication2()
         else:
-            form1.warning("Please enter your symptoms.")       
+            form1.warning("No medications found for the entered symptoms.")       
+    else:
+        form1.warning("Please enter your symptoms.")          
 
 async def generate_possible_medication2():
     possible_medications = st.session_state["possible_medications"]
