@@ -26,6 +26,9 @@ async def app():
     if "symptoms" not in st.session_state:
         st.session_state["symptoms"] = None
     
+    if "age" not in st.session_state:
+        st.session_state["age"] = None
+    
     if "selected_medication" not in st.session_state:
         st.session_state["selected_medication"] = None
         
@@ -52,6 +55,9 @@ async def display_symptoms_form1():
     
     # Prompt user for symptoms
     symptoms = form1.text_input("Enter your symptoms (comma-separated):", key="symptoms")
+
+    # Prompt user for age
+    age = form1.number_input("Enter your age:", min_value=0, max_value=150, key="age")
     
     submit1 = form1.form_submit_button("Submit")
 
@@ -59,8 +65,10 @@ async def display_symptoms_form1():
         if symptoms:
             if "symptoms" not in st.session_state:
                 st.session_state["symptoms"] = symptoms
-            # Generate a question based on symptoms
-            question = f"What medication would you recommend for {symptoms.strip()}?"
+            if "age" not in st.session_state:
+                st.session_state["age"] = age
+            # Generate a question based on symptoms and age
+            question = f"What medication would you recommend for a {age}-year-old with {symptoms.strip()}?"
             # Generate possible medications based on the question
             response = await generate_response(question, context)
             possible_medications = response.splitlines()
