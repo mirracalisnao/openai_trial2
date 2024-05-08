@@ -3,6 +3,7 @@ import openai
 import os
 import time
 import asyncio
+from openai import AsyncOpenAI
 
 # Create AsyncOpenAI instance
 client = AsyncOpenAI(api_key=os.getenv("API_key"))
